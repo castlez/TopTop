@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+  <HEAD>
+    <TITLE>
+    A Small Hello 
+    </TITLE>
+  </HEAD>
+  <BODY>
+    <H1>Would you like to be derped?</H1>
+    <button onclick="makeCanvas()">make canvas</button> 
+    <button onclick="drawCanvas()">draw canvas</button>
+  </BODY>
+</HTML>
+
+<script>
+function makeCanvas()
+{
+  var canvas = document.createElement("canvas");
+  var ctx = canvas.getContext("2d");
+  canvas.width = 512;
+  canvas.height = 480;
+  document.body.appendChild(canvas);
+
+}
+
+function drawCanvas()
+{
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext("2d");
+
+  var bgReady = false;
+  var bgImage = new Image();
+  bgImage.onload = function(){
+    bgReady = true;
+  };
+
+  bgImage.src = "images/background.png";
+
+  ctx.drawImage(bgImage,10,10);
+
+
+}
+</script>

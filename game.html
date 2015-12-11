@@ -9,9 +9,8 @@
     <H1>Game1</H1>
     <p>version 0.1</p>
     <!--  <img src="images/bg.png"> -->
-      
+    <button onClick="startGame()">Start</button> 
         <div id="gameboard">
-          <button onclick="makeScene()" id="removeMe">make canvas</button> 
         </div>
   </BODY>
   <script>
@@ -21,40 +20,58 @@
     bgImage.onload = function(){
       bgReady = true;
     };
+    bgWidth = 256;
+    bgHeight = 224;
 
     var platReady = false;
-    var platImage = new Image(100,100);
+    var platImage = new Image(56,54);
     platImage.src = "images/plat.png";
     platImage.onload = function () {
       platReady = true;
     };
+    platWidth = 56;
+    platHeight = 54;
+
+
+    var topReady = false;
+    var topImage = new Image(27,27);
+    topImage.src = "images/top.png";
+    topImage.onload = function () {
+      topReady = true;
+    };
+    topWidth = 27;
+    topHeight = 27;
+    grounded = false;
+    player = {};
 
     var board = document.getElementById("gameboard");
+    var keysDown = {};
+    
+    addEventListener("mousedown", startJump, false);
 
-    function makeScene()
+    addEventListener("mouseup", endJump, false);
+
+    function startGame()
     {
       canvas = document.createElement("canvas");
       ctx = canvas.getContext("2d");
       canvas.width = 256;
       canvas.height = 224;
 
-      canvas.setAttribute("onClick","startGame()");//will change
-      
-      board.removeChild(board.firstElementChild);
       board.appendChild(canvas);
-
-      //canvas.addEventListener("mousedown", );
-
-      drawBg() 
-
-    }
-
-    function startGame()
-    {
+      
       then = Date.now();
-      platPos = 128;
+      platPos = 0;
+      
       w = window;
       requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
+      
+      player = {};
+      player["x"] = 0;
+      player["y"] = 0;
+      player["vel"] = 0;
+      gravity = 0.5;
+      
       game();
 
     }
@@ -66,14 +83,48 @@
 
       //update and draw
       //temporary 
+      update(delta/1000)
       drawBg();
       drawPlat(platPos);
-
+      drawTop();
+      
 
       then = now;
       requestAnimationFrame(game);
-      
+    }
 
+    function update(mod)
+    {
+      //on a plateform
+      if(player["y"] > (224 - platHeight*2))
+      {
+        if(grounded == false)
+        {
+          player["y"] = (224 - (platHeight*2));
+          grounded = true;
+        }
+      }
+      else
+      {
+        
+        player["vel"] += gravity;
+        player["y"] += player["vel"];
+
+      }
+    }
+
+    function startJump()
+    {
+      player["vel"] = -12;
+      grounded = false;
+    }
+
+    function endJump()
+    {
+      if(player["vel"] < -6)
+      {
+        player["vel"] = -6
+      }
     }
 
     function drawBg()
@@ -81,12 +132,6 @@
       ctx.drawImage(bgImage,0,0);
     }
 
-    function update(mod)
-    {
-      
-    }
-
-  
     function drawPlat(w)
     {
       var board = document.getElementById("gameboard");
@@ -94,6 +139,12 @@
       var ctx = canvas.getContext("2d");
       ctx.drawImage(platImage,w,156);
     }
-  </script>
+    
+    function drawTop()
+    {
+      ctx.drawImage(topImage,player["x"],player["y"]);
+    }
 
+
+     </script>
 </HTML>

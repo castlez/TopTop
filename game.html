@@ -13,6 +13,7 @@
         <div id="gameboard">
         </div>
   </BODY>
+
   <script>
     var bgReady = false;
     var bgImage = new Image(256,224);
@@ -22,6 +23,16 @@
     };
     bgWidth = 256;
     bgHeight = 224;
+    
+
+    var goReady = false;
+    var goImage = new Image(256,224);
+    goImage.src = "images/gameover.png";
+    goImage.onload = function(){
+      goReady = true;
+    };
+    goWidth = 256;
+    goHeight = 224;
 
     var platReady = false;
     var platImage = new Image(56,54);
@@ -30,7 +41,9 @@
       platReady = true;
     };
     platWidth = 56;
-    platHeight = 54;
+    platHeight = 92;
+   
+    platforms = [];
 
 
     var topReady = false;
@@ -46,13 +59,21 @@
 
     var board = document.getElementById("gameboard");
     var keysDown = {};
-    
-    addEventListener("mousedown", startJump, false);
+    addEventListener("keydown", function (e) {
+      keysDown[e.keyCode] = true;
+    }, false);
 
-    addEventListener("mouseup", endJump, false);
+    addEventListener("keyup", function (e) {
+      delete keysDown[e.keyCode];
+    }, false);
 
     function startGame()
     {
+      if(board.firstChild)
+      {
+        board.removeChild(board.firstChild);
+      }
+      play = true;
       canvas = document.createElement("canvas");
       ctx = canvas.getContext("2d");
       canvas.width = 256;
@@ -61,7 +82,7 @@
       board.appendChild(canvas);
       
       then = Date.now();
-      platPos = 0;
+      addPlat(0);
       
       w = window;
       requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
@@ -85,37 +106,97 @@
       //temporary 
       update(delta/1000)
       drawBg();
-      drawPlat(platPos);
+      drawPlats();
       drawTop();
       
 
       then = now;
-      requestAnimationFrame(game);
+      if(play)
+      {
+        requestAnimationFrame(game);
+      }
+      else
+      {
+        gameover()
+      }
+    }
+    
+    function gameover()
+    {
+      ctx.drawImage(goImage,0,0);
     }
 
     function update(mod)
     {
+
       //on a plateform
-      if(player["y"] > (224 - platHeight*2))
+      if(player["y"] > (224 - platHeight))
       {
         if(grounded == false)
         {
-          player["y"] = (224 - (platHeight*2));
-          grounded = true;
+          if(onPlatform())
+          {
+            player["y"] = (224 - (platHeight));
+            grounded = true;
+          }
+          else
+          {
+            player["y"] += 5;
+            checkPos();
+          }
+        }
+        if(38 in keysDown){
+            startJump();
+        }
+        if(40 in keysDown){
+        }
+        if(37 in keysDown){
+          player["x"] -= 3;
+          checkPos();
+        }
+        if(39 in keysDown){
+          player["x"] += 3;
+          checkPos();
         }
       }
       else
       {
-        
+        if(38 in keysDown){
+            startJump();
+        }
+        if(40 in keysDown){
+        }
+        if(37 in keysDown){
+          player["x"] -= 5;
+        }
+        if(39 in keysDown){
+          player["x"] += 5;
+        }
         player["vel"] += gravity;
         player["y"] += player["vel"];
 
       }
     }
 
+    function checkPos()
+    {
+      if(player["y"] >= 224)
+      {
+        play = false;
+      }
+      if(player["y"] > (224 - platHeight))
+      {
+        if(onPlatform()==false)
+        {
+          player["y"] += 8;
+        }
+
+      }
+    }
+
     function startJump()
     {
-      player["vel"] = -12;
+      player["vel"] = -8;
       grounded = false;
     }
 
@@ -127,17 +208,40 @@
       }
     }
 
+    function onPlatform()
+    {
+      for (var i = 0 ; i < platforms.length ; ++i)
+      {
+        var p = platforms[i];
+        if(player["x"] >= p["x"] && player["x"] <= p["x"]+platWidth)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+    
+    function addPlat(w)
+    {
+      plat = {"x":w};
+
+      platforms.push(plat);
+    }
+    
     function drawBg()
     {
       ctx.drawImage(bgImage,0,0);
     }
 
-    function drawPlat(w)
+    function drawPlats()
     {
       var board = document.getElementById("gameboard");
       var canvas = board.firstElementChild;
       var ctx = canvas.getContext("2d");
-      ctx.drawImage(platImage,w,156);
+      for(var i = 0 ; i<platforms.length ; ++i)
+      {
+        ctx.drawImage(platImage,platforms[i]["x"],170);
+      }
     }
     
     function drawTop()

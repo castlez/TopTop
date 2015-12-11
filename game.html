@@ -2,42 +2,98 @@
 <HTML>
   <HEAD>
     <TITLE>
-    A Small Hello 
+    Game 
     </TITLE>
   </HEAD>
   <BODY>
-    <H1>Would you like to be derped?</H1>
-    <button onclick="makeCanvas()">make canvas</button> 
-    <button onclick="drawCanvas()">draw canvas</button>
+    <H1>Game1</H1>
+    <p>version 0.1</p>
+    <!--  <img src="images/bg.png"> -->
+      
+        <div id="gameboard">
+          <button onclick="makeScene()" id="removeMe">make canvas</button> 
+        </div>
   </BODY>
+  <script>
+    var bgReady = false;
+    var bgImage = new Image(256,224);
+    bgImage.src = "images/bg.png";
+    bgImage.onload = function(){
+      bgReady = true;
+    };
+
+    var platReady = false;
+    var platImage = new Image(100,100);
+    platImage.src = "images/plat.png";
+    platImage.onload = function () {
+      platReady = true;
+    };
+
+    var board = document.getElementById("gameboard");
+
+    function makeScene()
+    {
+      canvas = document.createElement("canvas");
+      ctx = canvas.getContext("2d");
+      canvas.width = 256;
+      canvas.height = 224;
+
+      canvas.setAttribute("onClick","startGame()");//will change
+      
+      board.removeChild(board.firstElementChild);
+      board.appendChild(canvas);
+
+      //canvas.addEventListener("mousedown", );
+
+      drawBg() 
+
+    }
+
+    function startGame()
+    {
+      then = Date.now();
+      platPos = 128;
+      w = window;
+      requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
+      game();
+
+    }
+    
+    function game()
+    {
+      var now = Date.now();
+      var delta = now - then;
+
+      //update and draw
+      //temporary 
+      drawBg();
+      drawPlat(platPos);
+
+
+      then = now;
+      requestAnimationFrame(game);
+      
+
+    }
+
+    function drawBg()
+    {
+      ctx.drawImage(bgImage,0,0);
+    }
+
+    function update(mod)
+    {
+      
+    }
+
+  
+    function drawPlat(w)
+    {
+      var board = document.getElementById("gameboard");
+      var canvas = board.firstElementChild;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(platImage,w,156);
+    }
+  </script>
+
 </HTML>
-
-<script>
-function makeCanvas()
-{
-  var canvas = document.createElement("canvas");
-  var ctx = canvas.getContext("2d");
-  canvas.width = 512;
-  canvas.height = 480;
-  document.body.appendChild(canvas);
-
-}
-
-function drawCanvas()
-{
-  var canvas = document.getElementById("canvas");
-  var ctx = canvas.getContext("2d");
-
-  var bgReady = false;
-  var bgImage = new Image();
-  bgImage.onload = function(){
-    bgReady = true;
-  };
-
-  bgImage.src = "images/background.png";
-
-  ctx.drawImage(bgImage,10,10);
-
-
-}
-</script>

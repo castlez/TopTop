@@ -1,10 +1,11 @@
-#####Game1#######
-This is a game and
-you should play it.
+###################TopTop##########################
+The goal of this game is to be the best.
+This means spinning the farthest. To progress
+you must jump from platform to platform without
+falling. Each platform you jump will increase your
+score and get you ever closer to the top top.
+###################################################
 
 Copyright (c) 2015 Jonathan Castle
 
-OVERVIEW
-This game involves a top that jumps on platforms.
-It is a javascript game, with a html front, so execution
-of the game is the same as a website.
+To play they game, go to the website a press play

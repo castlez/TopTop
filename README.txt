@@ -1,3 +1,8 @@
+This was made before I knew javascript or html very well so its all in one file and its pretty hard to follow. 
+I'm keeping it around because I implemented games stuff (like physics and dying) so I might use it as a reference someday.
+
+Contact me if you have and questions.
+
 ###################TopTop##########################
 The goal of this game is to be the best.
 This means spinning the farthest. To progress
